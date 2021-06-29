@@ -1,0 +1,53 @@
+{
+  "name": "list-bot",
+  "version": "0.0.1",
+  "description": "Discord bot for Liam's Server.",
+  "main": "dist/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run eslint:format && tsc",
+    "build:watch": "tsc -w",
+    "start": "node .",
+    "eslint": "eslint src/**/*.ts",
+    "eslint:format": "eslint --fix src/**/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lbonnage/list-bot.git"
+  },
+  "author": "Liam Bonnage",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lbonnage/list-bot/issues"
+  },
+  "homepage": "https://github.com/lbonnage/list-bot#readme",
+  "dependencies": {
+    "discord-api-types": "^0.18.1",
+    "discord.js": "^13.0.0-dev.0d0c8f07f2535dd315ca95abe35e848c13d0ddf5",
+    "dotenv": "^10.0.0",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/parser": "^4.28.0",
+    "eslint": "^7.29.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "eslint . --fix",
+      "git add"
+    ]
+  }
+}
