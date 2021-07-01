@@ -1,9 +1,11 @@
 import { Client } from 'discord.js';
-import { BotMessage } from './bot-message';
-import { BotCommand } from '../commands/bot-command';
-import { Logger } from '../../lib/logger';
+import { BotMessage } from './bot-message.js';
+import { BotCommand } from '../commands/bot-command.js';
+import { Logger } from '../../lib/logger.js';
 
-import * as commands from '../commands';
+import * as commands from '../commands/index.js';
+
+const logger = Logger('deploy');
 
 function execute(client: Client): void {
   logger.info(`Deploy called.`);
@@ -48,5 +50,3 @@ function execute(client: Client): void {
 export const Deploy: BotMessage = {
   execute,
 };
-
-const logger = Logger('deploy');

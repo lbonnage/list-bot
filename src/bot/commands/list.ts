@@ -1,7 +1,9 @@
 import { Client, Interaction, Snowflake } from 'discord.js';
 import { ApplicationCommandPermissionType } from 'discord-api-types';
-import { BotCommand } from './bot-command';
-import { Logger } from '../../lib/logger';
+import { BotCommand } from './bot-command.js';
+import { Logger } from '../../lib/logger.js';
+
+const logger = Logger('list');
 
 function execute(client: Client, interaction: Interaction): void {
   logger.info(`Executing List command on client ${client.token} with interaction ${JSON.stringify(interaction)}`);
@@ -34,5 +36,3 @@ export const List: BotCommand = {
     },
   ],
 };
-
-const logger = Logger('list');

@@ -1,5 +1,5 @@
 import { ApplicationCommandData, Client, Interaction } from 'discord.js';
-import { BotCommandPermissions } from './bot-command-permissions';
+import { BotCommandPermissions } from './bot-command-permissions.js';
 
 /**
  * Used to create slash-commands for the bot.

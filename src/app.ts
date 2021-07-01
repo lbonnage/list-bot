@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
-import { Bot } from './bot/bot';
-import { Logger } from './lib/logger';
+import { Bot } from './bot/bot.js';
+import { Logger } from './lib/logger.js';
 
 const logger = Logger('app');
 

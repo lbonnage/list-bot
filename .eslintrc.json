@@ -14,13 +14,12 @@
     "@typescript-eslint/no-explicit-any": "error",
     "import/extensions": "off",
     "import/prefer-default-export": "off",
-    "class-methods-use-this": "off",
-    "no-use-before-define": ["error", { "variables": false }] // Allows for logger to be defined at bottom of file
+    "class-methods-use-this": "off"
   },
   "settings": {
     "import/resolver": {
-      "node": {
-        "extensions": [".js", ".ts"]
+      "typescript": {
+        "alwaysTryTypes": true
       }
     }
   }

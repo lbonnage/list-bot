@@ -1,10 +1,12 @@
 import { Client, Intents, Message, Interaction, CommandInteraction } from 'discord.js';
-import { BotMessage } from './messages/bot-message';
-import { BotCommand } from './commands/bot-command';
-import { Logger } from '../lib/logger';
+import { BotMessage } from './messages/bot-message.js';
+import { BotCommand } from './commands/bot-command.js';
+import { Logger } from '../lib/logger.js';
 
-import * as messages from './messages';
-import * as commands from './commands';
+import * as messages from './messages/index.js';
+import * as commands from './commands/index.js';
+
+const logger = Logger('bot');
 
 /**
  * The Bot class, containing logic for all commands and state.
@@ -122,5 +124,3 @@ export class Bot {
     }
   }
 }
-
-const logger = Logger('bot');
