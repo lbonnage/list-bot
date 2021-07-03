@@ -3,6 +3,8 @@ import 'dotenv/config';
 import { Bot } from './bot/bot.js';
 import { Logger } from './lib/logger.js';
 
+import { database } from './bot/database/models/index.js';
+
 const logger = Logger('app');
 
 // Retrieve environment variables.
@@ -20,6 +22,12 @@ if (process.env.PREFIX) {
   logger.error(`Unable to retrieve PREFIX from environment.`);
   throw new Error('Unable to retrieve PREFIX from environment.');
 }
+
+// Authenticate the database.
+database
+  .authenticate()
+  .then(() => logger.info('Database connection has been successfully authenticate.'))
+  .catch((error) => logger.error(`Failed to authenticate database connection: ${error}.`));
 
 // Create and start the bot.
 const bot = new Bot(token, prefix);

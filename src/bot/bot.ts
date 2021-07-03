@@ -90,12 +90,12 @@ export class Bot {
    * Response to interactions.
    * @private
    */
-  private onInteraction = (interaction: Interaction) => {
+  private onInteraction = async (interaction: Interaction): Promise<void> => {
     logger.info(`Received Interaction: ${JSON.stringify(interaction)}`);
     // TODO Find a way to use an enum for these cases
     switch (interaction.type) {
       case 'APPLICATION_COMMAND':
-        this.handleCommandInteraction(interaction as CommandInteraction);
+        await this.handleCommandInteraction(interaction as CommandInteraction);
         break;
       case 'MESSAGE_COMPONENT':
         break;
@@ -111,14 +111,14 @@ export class Bot {
    * @param commandInteraction The CommandInteraction that needs to be handled.
    * @private
    */
-  private handleCommandInteraction(commandInteraction: CommandInteraction) {
+  private async handleCommandInteraction(commandInteraction: CommandInteraction) {
     logger.info(`Handling Command Interaction: ${commandInteraction.commandName}.`);
     const command: string =
       commandInteraction.commandName[0].toUpperCase() + commandInteraction.commandName.slice(1).toLowerCase();
     if (command in commands) {
       logger.info(`Matched input command: ${command}`);
       const botCommand: BotCommand = commands[command as keyof typeof commands] as BotCommand;
-      botCommand.execute(this.client, commandInteraction);
+      await botCommand.execute(this.client, commandInteraction);
     } else {
       logger.error(`Failed to match input command: ${command}`);
     }

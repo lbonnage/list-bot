@@ -1,4 +1,4 @@
-import { ApplicationCommandData, Client, Interaction } from 'discord.js';
+import { ApplicationCommandData, Client, CommandInteraction } from 'discord.js';
 import { BotCommandPermissions } from './bot-command-permissions.js';
 
 /**
@@ -15,7 +15,7 @@ export interface BotCommand {
    * @param client The Discord Client of the bot.
    * @param interaction The Interaction associated with the call of this command.
    */
-  execute: (client: Client, interaction: Interaction) => void;
+  execute: (client: Client, interaction: CommandInteraction) => Promise<void>;
 
   /**
    * Permissions for use of this command.
