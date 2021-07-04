@@ -154,7 +154,7 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
     const users: User[] = await User.findAll();
     await users.forEach((user) => {
       interaction.client.users.fetch(user.getDataValue('discordId') as Snowflake).then((retrievedUser) => {
-        idToName.set(user.getDataValue('id'), retrievedUser.username);
+        idToName.set(user.getDataValue('id'), `@${retrievedUser.username}#${retrievedUser.discriminator}`);
       });
     });
 
@@ -175,7 +175,7 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
       .then((url) => {
         interaction.reply({
           content: `${url}`,
-          ephemeral: true,
+          ephemeral: false,
         });
       })
       .catch((error) => {
