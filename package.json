@@ -27,6 +27,7 @@
     "discord-api-types": "^0.18.1",
     "discord.js": "^13.0.0-dev.0d0c8f07f2535dd315ca95abe35e848c13d0ddf5",
     "dotenv": "^10.0.0",
+    "got": "^11.8.2",
     "sequelize": "^6.6.4",
     "sqlite3": "^5.0.2",
     "winston": "^3.3.3"

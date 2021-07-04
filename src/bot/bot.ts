@@ -118,7 +118,7 @@ export class Bot {
     if (command in commands) {
       logger.info(`Matched input command: ${command}`);
       const botCommand: BotCommand = commands[command as keyof typeof commands] as BotCommand;
-      await botCommand.execute(this.client, commandInteraction);
+      await botCommand.execute(commandInteraction);
     } else {
       logger.error(`Failed to match input command: ${command}`);
     }
