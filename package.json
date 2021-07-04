@@ -9,7 +9,9 @@
     "build:watch": "tsc -w",
     "start": "node .",
     "eslint": "eslint src/**/*.ts",
-    "eslint:format": "eslint --fix src/**/*.ts"
+    "eslint:format": "eslint --fix src/**/*.ts",
+    "server": "pm2 start dist/app.js --name list-bot --log logs/pm2.log",
+    "server:monitor": "pm2 monit"
   },
   "repository": {
     "type": "git",
