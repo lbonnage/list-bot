@@ -9,7 +9,7 @@ export class PastebinService {
       got
         .post('https://pastebin.com/api/api_post.php', {
           form: {
-            api_dev_key: 'Vf2Y5zGR09b3-EEuIbF6gtLGPWwU5pN-',
+            api_dev_key: process.env.PASTEBIN_DEV_KEY,
             api_option: 'paste',
             api_paste_code: paste,
             api_paste_name: 'The List',
