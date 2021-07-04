@@ -181,7 +181,7 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
       .catch((error) => {
         logger.error(`Failed creating paste: ${error}.`);
         interaction.reply({
-          content: `Failed to create The List on Pastebin.  Most likely reached maximum number of uploads (10 per 24h).`,
+          content: `Failed to create ${listString} on Pastebin.  Most likely reached maximum number of uploads (10 per 24h).`,
           ephemeral: true,
         });
       });
