@@ -173,8 +173,11 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
 
     PastebinService.createPaste(paste)
       .then((url) => {
+        // We want to link to the raw URL, so we should use the last part of the url.
+        const param: string = url.split('/').pop() as string;
+
         interaction.reply({
-          content: `${url}`,
+          content: `${`https://pastebin.com/raw/${param}`}`,
           ephemeral: false,
         });
       })
