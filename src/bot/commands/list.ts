@@ -166,7 +166,9 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
       const timeAdded: Date = listEntry.getDataValue('timeAdded');
       const reason: string = listEntry.getDataValue('reason');
 
-      paste += `${index + 1}. ${entryName}\t\tAdded by: ${submitterName}\t\tReason: ${reason}\t\tTime added: ${timeAdded.toLocaleString(
+      paste += `${
+        index + 1
+      }.\t${entryName}\t\tAdded by: ${submitterName}\t\tReason: ${reason}\t\tTime added: ${timeAdded.toLocaleString(
         'en-US',
       )}\n`;
     });
