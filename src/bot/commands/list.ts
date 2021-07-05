@@ -166,9 +166,9 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
       const timeAdded: Date = listEntry.getDataValue('timeAdded');
       const reason: string = listEntry.getDataValue('reason');
 
-      paste += `${index + 1}. ${entryName}\tReason: ${reason}\tTime added: ${timeAdded.toLocaleString(
+      paste += `${index + 1}. ${entryName}\t\tReason: ${reason}\t\tTime added: ${timeAdded.toLocaleString(
         'en-US',
-      )}\tAdded by: ${submitterName}\n`;
+      )}\t\tAdded by: ${submitterName}\n`;
     });
 
     PastebinService.createPaste(paste)
