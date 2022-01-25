@@ -33,7 +33,7 @@ if (process.env.PREFIX) {
 // Authenticate the database.
 database
   .authenticate()
-  .then(() => logger.info('Database connection has been successfully authenticate.'))
+  .then(() => logger.info('Database connection has been successfully authenticated.'))
   .catch((error) => logger.error(`Failed to authenticate database connection: ${error}.`));
 
 // Create and start the bot.
