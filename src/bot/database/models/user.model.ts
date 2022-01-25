@@ -10,14 +10,14 @@ export interface UserAttributes {
 
 type UserCreationAttributes = sequelize.Optional<UserAttributes, 'id'>;
 
-export class User extends sequelize.Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  public id!: number;
+export class User extends sequelize.Model<UserAttributes, UserCreationAttributes> {
+  declare id: number;
 
-  public discordId!: string;
+  declare discordId: string;
 
-  public readonly createdAt!: Date;
+  declare readonly createdAt: Date;
 
-  public readonly updatedAt!: Date;
+  declare readonly updatedAt: Date;
 
   public static async FindOrCreate(discordId: string): Promise<User> {
     logger.info(`FindOrCreate called with discordId: ${discordId}.`);

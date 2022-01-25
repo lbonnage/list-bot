@@ -1,11 +1,12 @@
 import * as fs from 'fs';
 
 import { CommandInteraction, CommandInteractionOption, Message, MessageAttachment, Snowflake, User as DiscordUser } from 'discord.js';
-import { ApplicationCommandOptionType, ApplicationCommandPermissionType } from 'discord-api-types';
+import { SlashCommandBuilder } from '@discordjs/builders';
 import { BotCommand } from './bot-command.js';
 import { User } from '../database/models/user.model.js';
 import { ListEntry, ListEntryType } from '../database/models/list-entry.model.js';
 import { Logger } from '../../lib/logger.js';
+import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums';
 
 const logger = Logger('list');
 
@@ -107,7 +108,7 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
   // There are two different calls here: If a user is specified, simply check how many times the user is on The List, and return their most recent entry.
   // If a user is not specified, you need to provide an upload of The List.
 
-  if (userDiscord !== undefined) {
+  if (userDiscord) {
     // First, you must check to see if the user you are adding exists in the database.
     // If they don't exist, you must add them to the database.
     const user: User = await User.FindOrCreate(userDiscord.id);
@@ -153,11 +154,12 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
     // First, create a map mapping from user ID to current Discord name, to efficiently list users who are on The List multiple times.
     const idToName: Map<number, string> = new Map();
     const users: User[] = await User.findAll();
-    await users.forEach((user) => {
-      interaction.client.users.fetch(user.getDataValue('discordId') as Snowflake).then((retrievedUser) => {
+
+    for (const user of users) {
+      await interaction.client.users.fetch(user.getDataValue('discordId') as Snowflake).then((retrievedUser) => {
         idToName.set(user.getDataValue('id'), `@${retrievedUser.username}#${retrievedUser.discriminator}`);
       });
-    });
+    }    
 
     // Second, retrieve all entries to The List and then construct the string for each.
     const listEntries: ListEntry[] = await ListEntry.findAll();
@@ -181,19 +183,21 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
 }
 
 async function execute(interaction: CommandInteraction): Promise<void> {
-  logger.info(`Executing List command with interaction ${JSON.stringify(interaction)}`);
+  logger.info(`Executing List command.}`);
 
   const callerDiscord: DiscordUser = interaction.user;
   let value: CommandInteractionOption;
   let userDiscord: DiscordUser;
   let reason: string;
-  switch (interaction.options.firstKey()) {
+  switch (interaction.options.getSubcommand()) {
     case ListCommand.ADD:
       value = interaction.options.get(ListCommand.ADD) as CommandInteractionOption;
       logger.info(`List ${ListCommand.ADD} command called with value: ${JSON.stringify(value)}`);
 
-      userDiscord = value.options?.get(ListCommand.USER)?.user as DiscordUser;
-      reason = value.options?.get(ListCommand.REASON)?.value as string;
+      // userDiscord = value.options?.get(ListCommand.USER)?.user as DiscordUser;
+      userDiscord = interaction.options.getUser(ListCommand.USER) as DiscordUser;
+      // reason = value.options?.get(ListCommand.REASON)?.value as string;
+      reason = interaction.options.getString(ListCommand.REASON) as string;
 
       await onAdd(interaction, userDiscord, callerDiscord, reason);
 
@@ -202,7 +206,9 @@ async function execute(interaction: CommandInteraction): Promise<void> {
       value = interaction.options.get(ListCommand.REMOVE) as CommandInteractionOption;
       logger.info(`List ${ListCommand.REMOVE} command called with value: ${JSON.stringify(value)}`);
 
-      userDiscord = value.options?.get(ListCommand.USER)?.user as DiscordUser;
+      // userDiscord = value.options?.get(ListCommand.USER)?.user as DiscordUser;
+      userDiscord = interaction.options.getUser(ListCommand.USER) as DiscordUser;
+
 
       await onAdd(interaction, callerDiscord, callerDiscord, 'Tried to remove someone from The List.');
 
@@ -211,7 +217,8 @@ async function execute(interaction: CommandInteraction): Promise<void> {
       value = interaction.options.get(ListCommand.CHECK) as CommandInteractionOption;
       logger.info(`List ${ListCommand.CHECK} command called with value: ${JSON.stringify(value)}`);
 
-      userDiscord = value.options?.get(ListCommand.USER)?.user as DiscordUser;
+      // userDiscord = value.options?.get(ListCommand.USER)?.user as DiscordUser;
+      userDiscord = interaction.options.getUser(ListCommand.USER) as DiscordUser;
 
       if (userDiscord !== undefined) {
         await onCheck(interaction, userDiscord);
@@ -233,7 +240,7 @@ async function execute(interaction: CommandInteraction): Promise<void> {
 
       break;
     default:
-      logger.error(`Unrecognized List Command: ${interaction.options.firstKey()}.`);
+      logger.error(`Unrecognized List Command: ${interaction.commandName}.`);
       await interaction.reply({
         content: `Unknown command.`,
         ephemeral: true,
@@ -241,67 +248,58 @@ async function execute(interaction: CommandInteraction): Promise<void> {
   }
 }
 
+const listCommand = new SlashCommandBuilder()
+  .setName(ListCommand.LIST)
+  .setDescription('The List')
+  .addSubcommand(subcommand => 
+    subcommand
+      .setName(ListCommand.ADD)
+      .setDescription('Add an entry to The List.')
+      .addUserOption(option => 
+        option
+          .setName(ListCommand.USER)
+          .setDescription('The user to add to The List.')
+          .setRequired(true)
+        )
+      .addStringOption(option => option
+          .setName(ListCommand.REASON)
+          .setDescription('The reason this user was added to The List.')
+          .setRequired(false)
+        )
+    )
+  .addSubcommand(subcommand => 
+    subcommand
+      .setName(ListCommand.REMOVE)
+      .setDescription('Remove an entry from The List.')
+      .addUserOption(option => 
+        option
+          .setName(ListCommand.USER)
+          .setDescription('The user to remove the latest entry of from The List.')
+          .setRequired(true)
+        )
+      )
+  .addSubcommand(subcommand => 
+    subcommand
+      .setName(ListCommand.CHECK)
+      .setDescription('Check The List  If a user is not specified, returns an upload of The List.')
+      .addUserOption(option => 
+        option
+          .setName(ListCommand.USER)
+          .setDescription("Check a specific user's presence on The List.")
+          .setRequired(false)
+        )
+    )
+  .addSubcommand(subcommand =>
+    subcommand
+      .setName(ListCommand.HELP)
+      .setDescription("Explain The List.")
+    )
+
 /**
  * The List command for the server.  Allows access to and control of The List.
  */
 export const List: BotCommand = {
-  commandData: {
-    defaultPermission: false,
-    description: 'The List.',
-    name: ListCommand.LIST,
-    options: [
-      {
-        name: ListCommand.ADD,
-        description: 'Add an entry to The List.',
-        type: ApplicationCommandOptionType.SUB_COMMAND,
-        options: [
-          {
-            name: ListCommand.USER,
-            description: 'The user to add to The List.',
-            type: ApplicationCommandOptionType.USER,
-            required: true,
-          },
-          {
-            name: ListCommand.REASON,
-            description: 'The reason this user was added to The List.',
-            type: ApplicationCommandOptionType.STRING,
-            required: false,
-          },
-        ],
-      },
-      {
-        name: ListCommand.REMOVE,
-        description: 'Remove an entry from The List.',
-        type: ApplicationCommandOptionType.SUB_COMMAND,
-        options: [
-          {
-            name: ListCommand.REMOVE,
-            description: 'The user to remove the latest entry of from The List.',
-            type: ApplicationCommandOptionType.USER,
-            required: true,
-          },
-        ],
-      },
-      {
-        name: ListCommand.CHECK,
-        description: 'Check The List  If a user is not specified, returns an upload of The List.',
-        type: ApplicationCommandOptionType.SUB_COMMAND,
-        options: [
-          {
-            name: ListCommand.USER,
-            description: "Check a specific user's presence on The List.",
-            type: ApplicationCommandOptionType.USER,
-            required: false,
-          },
-        ],
-      },
-      {
-        name: ListCommand.HELP,
-        description: 'Explain The List.',
-        type: ApplicationCommandOptionType.SUB_COMMAND,
-      },
-    ],
-  },
+  commandData: listCommand,
   execute,
   permissions: [
     {
@@ -309,7 +307,7 @@ export const List: BotCommand = {
       permissions: [
         {
           id: process.env.MEMBER_ROLE_ID as Snowflake,
-          type: ApplicationCommandPermissionType.ROLE,
+          type: ApplicationCommandPermissionTypes.ROLE,
           permission: true,
         },
       ],

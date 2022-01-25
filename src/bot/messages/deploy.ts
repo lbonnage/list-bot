@@ -1,47 +1,33 @@
-import { Client } from 'discord.js';
+import { RequestData, REST } from '@discordjs/rest';
+import { RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord-api-types/v9';
 import { BotMessage } from './bot-message.js';
 import { BotCommand } from '../commands/bot-command.js';
 import { Logger } from '../../lib/logger.js';
+import { Bot } from '../bot.js';
 
 import * as commands from '../commands/index.js';
 
 const logger = Logger('deploy');
 
-function execute(client: Client): void {
+function execute(bot: Bot): void {
   logger.info(`Deploy called.`);
 
-  // First, wipe any commands that currently exist.
-  client.application?.commands.set([]);
-
-  // Second, iterate through all commands and create them.
+  const commandsJSON: RESTPostAPIApplicationCommandsJSONBody[] = []
   Object.values(commands).forEach((command: BotCommand) => {
     logger.info(`Adding command: ${command.commandData.name}.`);
-    client.application?.commands
-      .create(command.commandData)
-      .then((createdCommand) => {
-        logger.info(`Successfully added command: ${createdCommand.name}.`);
+    commandsJSON.push(command.commandData.toJSON());
+  })
 
-        // If necessary, fine-tune permissions for the command on individual guilds.
-        command.permissions?.forEach((botPermission) => {
-          logger.info(`Setting permissions for command '${createdCommand.name}' in guild ${botPermission.guildId}.`);
-          createdCommand
-            .setPermissions(botPermission.permissions, botPermission.guildId)
-            .then(() => {
-              logger.info(
-                `Successfully set permissions for command '${createdCommand.name}' in guild ${botPermission.guildId}.`,
-              );
-            })
-            .catch((error) => {
-              logger.error(
-                `Failed to set permissions for command '${createdCommand.name}' in guild ${botPermission.guildId} with error: ${error}.`,
-              );
-            });
-        });
-      })
-      .catch((error) => {
-        logger.error(`Failed to add Command '${command.commandData.name}' with error: ${error}.`);
-      });
-  });
+  const rest = new REST({version: '9'}).setToken(bot.token);
+
+  (async () => {
+    try {
+      await rest.put(Routes.applicationCommands(bot.clientId as `${bigint}`), { body: commandsJSON });
+    } catch (e) {
+      logger.error(`Failed to add commands: ${e}`);
+    }
+  })();
+
 }
 
 /**

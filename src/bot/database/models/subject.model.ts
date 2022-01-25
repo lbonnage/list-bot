@@ -20,17 +20,17 @@ export class Subject
   extends sequelize.Model<SubjectAttributes, SubjectCreationAttributes>
   implements SubjectAttributes
 {
-  public id!: number;
+  declare id: number;
 
-  public discordId!: string;
+  declare discordId: string;
 
-  public lastUpdatedTime!: Date;
+  declare lastUpdatedTime: Date;
 
-  public subjectType!: SubjectType;
+  declare subjectType: SubjectType;
 
-  public readonly createdAt!: Date;
+  declare readonly createdAt: Date;
 
-  public readonly updatedAt!: Date;
+  declare readonly updatedAt: Date;
 }
 
 export const SubjectModelAttributes: sequelize.ModelAttributes = {

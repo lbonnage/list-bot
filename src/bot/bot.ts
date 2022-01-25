@@ -16,7 +16,10 @@ export class Bot {
   private readonly client: Client;
 
   // The bot token assigned to this bot.
-  private readonly token: string;
+  public readonly token: string;
+
+  // The client ID of this bot.
+  public readonly clientId: string;
 
   // The prefix used to identify message commands to this bot.
   private readonly prefix: string;
@@ -24,13 +27,17 @@ export class Bot {
   /**
    * Construct an instance of the Bot class.
    * @param token Discord Bot Token.
+   * @param clientId Discord Bot Client ID.
    * @param prefix Prefix for message commands.
    */
-  constructor(token: string, prefix: string) {
+  constructor(token: string, clientId: string, prefix: string) {
     logger.info(`Creating Bot with prefix: ${prefix}`);
     this.token = token;
+    this.clientId = clientId;
     this.prefix = prefix;
-    this.client = new Client({ intents: Intents.ALL });
+    const intents = new Intents();
+    intents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES);
+    this.client = new Client({ intents });
   }
 
   /**
@@ -47,8 +54,8 @@ export class Bot {
   public init(): void {
     logger.info('Bot initializing.');
     this.client.once('ready', this.onReady);
-    this.client.on('message', this.onMessage);
-    this.client.on('interaction', this.onInteraction);
+    this.client.on('messageCreate', this.onMessage);
+    this.client.on('interactionCreate', this.onInteraction);
     logger.info('Bot initialized.');
   }
 
@@ -65,6 +72,8 @@ export class Bot {
    * @private
    */
   private onMessage = (message: Message) => {
+    logger.info(`Received Message: ${message}`);
+
     if (!message.content.startsWith(this.prefix) || message.author.bot) return;
 
     logger.info(`Received Message: ${message}`);
@@ -80,7 +89,7 @@ export class Bot {
     if (command in messages) {
       logger.info(`Matched input command: ${command}`);
       const botMessage: BotMessage = messages[command as keyof typeof messages] as BotMessage;
-      botMessage.execute(this.client);
+      botMessage.execute(this);
     } else {
       logger.error(`Failed to match input command: ${command}`);
     }
@@ -91,7 +100,7 @@ export class Bot {
    * @private
    */
   private onInteraction = async (interaction: Interaction): Promise<void> => {
-    logger.info(`Received Interaction: ${JSON.stringify(interaction)}`);
+    logger.info(`Received Interaction.`);
     // TODO Find a way to use an enum for these cases
     switch (interaction.type) {
       case 'APPLICATION_COMMAND':

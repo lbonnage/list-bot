@@ -24,9 +24,11 @@
   },
   "homepage": "https://github.com/lbonnage/list-bot#readme",
   "dependencies": {
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/rest": "^0.3.0",
     "@types/node": "^15.14.0",
     "@types/validator": "^13.6.0",
-    "discord-api-types": "^0.18.1",
+    "discord-api-types": "^0.26.1",
     "discord.js": "^13.0.0-dev.0d0c8f07f2535dd315ca95abe35e848c13d0ddf5",
     "dotenv": "^10.0.0",
     "got": "^11.8.2",
