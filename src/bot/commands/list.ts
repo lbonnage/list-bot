@@ -151,7 +151,7 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
 
     // First, create a map mapping from user ID to current Discord name, to efficiently list users who are on The List multiple times.
     const idToName: Map<number, string> = new Map();
-    const users: User[] = await User .findAll();
+    const users: User[] = await User.findAll();
 
     for (const user of users) {
       await interaction.client.users.fetch(user.getDataValue('discordId') as Snowflake).then((retrievedUser) => {
