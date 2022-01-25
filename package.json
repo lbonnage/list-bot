@@ -33,7 +33,7 @@
     "dotenv": "^10.0.0",
     "got": "^11.8.2",
     "sequelize": "^6.6.4",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "^4.2.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
