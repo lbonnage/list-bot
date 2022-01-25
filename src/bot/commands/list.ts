@@ -1,10 +1,11 @@
-import { CommandInteraction, CommandInteractionOption, Snowflake, User as DiscordUser } from 'discord.js';
+import * as fs from 'fs';
+
+import { CommandInteraction, CommandInteractionOption, Message, MessageAttachment, Snowflake, User as DiscordUser } from 'discord.js';
 import { ApplicationCommandOptionType, ApplicationCommandPermissionType } from 'discord-api-types';
 import { BotCommand } from './bot-command.js';
 import { User } from '../database/models/user.model.js';
 import { ListEntry, ListEntryType } from '../database/models/list-entry.model.js';
 import { Logger } from '../../lib/logger.js';
-import { PastebinService } from '../services/pastebin.js';
 
 const logger = Logger('list');
 
@@ -173,23 +174,9 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
       )}\n`;
     });
 
-    PastebinService.createPaste(paste)
-      .then((url) => {
-        // We want to link to the raw URL, so we should use the last part of the url.
-        const param: string = url.split('/').pop() as string;
+    fs.writeFileSync('./list.txt', paste);
+    await interaction.reply({files: [new MessageAttachment('./list.txt')]});
 
-        interaction.reply({
-          content: `${`https://pastebin.com/raw/${param}`}`,
-          ephemeral: false,
-        });
-      })
-      .catch((error) => {
-        logger.error(`Failed creating paste: ${error}.`);
-        interaction.reply({
-          content: `Failed to create ${listString} on Pastebin.  Most likely reached maximum number of uploads (10 per 24h).`,
-          ephemeral: true,
-        });
-      });
   }
 }
 

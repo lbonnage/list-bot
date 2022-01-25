@@ -215,3 +215,9 @@ modules.xml
 .idea/sonarlint
 
 # End of https://www.toptal.com/developers/gitignore/api/node,webstorm+all
+
+# The database
+list-bot-database/database.db
+
+# The text file created by the `/list check` command.\
+list.txt
