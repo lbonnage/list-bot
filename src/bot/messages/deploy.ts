@@ -12,8 +12,6 @@ const logger = Logger('deploy');
 function execute(bot: Bot): void {
   logger.info(`Deploy called.`);
 
-
-
   const rest = new REST({version: '9'}).setToken(bot.token);
 
   // First, delete all guild commands.
