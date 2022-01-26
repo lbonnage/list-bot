@@ -144,6 +144,7 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
 
     fs.writeFileSync('./list.txt', paste);
     await interaction.reply({files: [new MessageAttachment('./list.txt')]});
+
   } else {
     // We must create a string containing all entries to The List.
     let paste = '';
