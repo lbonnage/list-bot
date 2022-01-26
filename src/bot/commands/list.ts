@@ -144,14 +144,13 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
 
     fs.writeFileSync('./list.txt', paste);
     await interaction.reply({files: [new MessageAttachment('./list.txt')]});
-
   } else {
     // We must create a string containing all entries to The List.
     let paste = '';
 
     // First, create a map mapping from user ID to current Discord name, to efficiently list users who are on The List multiple times.
     const idToName: Map<number, string> = new Map();
-    const users: User[] = await User.findAll();
+    const users: User[] = await User .findAll();
 
     for (const user of users) {
       await interaction.client.users.fetch(user.getDataValue('discordId') as Snowflake).then((retrievedUser) => {
