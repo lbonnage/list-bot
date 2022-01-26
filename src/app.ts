@@ -15,6 +15,13 @@ if (process.env.BOT_TOKEN) {
   logger.error(`Unable to retrieve BOT_TOKEN from environment.`);
   throw new Error('Unable to retrieve BOT_TOKEN from environment.');
 }
+let clientId: string;
+if (process.env.CLIENT_ID) {
+  clientId = process.env.CLIENT_ID;
+} else {
+  logger.error(`Unable to retrieve CLIENT_ID from environment.`);
+  throw new Error('Unable to retrieve CLIENT_ID from environment.');
+}
 let prefix: string;
 if (process.env.PREFIX) {
   prefix = process.env.PREFIX;
@@ -26,11 +33,11 @@ if (process.env.PREFIX) {
 // Authenticate the database.
 database
   .authenticate()
-  .then(() => logger.info('Database connection has been successfully authenticate.'))
+  .then(() => logger.info('Database connection has been successfully authenticated.'))
   .catch((error) => logger.error(`Failed to authenticate database connection: ${error}.`));
 
 // Create and start the bot.
-const bot = new Bot(token, prefix);
+const bot = new Bot(token, clientId, prefix);
 
 bot
   .login()

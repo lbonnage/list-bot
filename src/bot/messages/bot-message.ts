@@ -1,12 +1,11 @@
-import { Client } from 'discord.js';
-
+import { Bot } from "../bot";
 /**
  * Represents a message command.
  */
 export interface BotMessage {
   /**
    * The logic to execute when this command is called.
-   * @param client The Discord Client of the bot.
+   * @param bot The Discord bot.
    */
-  execute: (client: Client) => void;
+  execute: (bot: Bot) => void;
 }

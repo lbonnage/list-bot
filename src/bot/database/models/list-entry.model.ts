@@ -21,21 +21,21 @@ export class ListEntry
   extends sequelize.Model<ListEntryAttributes, ListEntryCreationAttributes>
   implements ListEntryAttributes
 {
-  public id!: number;
+  declare id: number;
 
-  public entry!: number;
+  declare entry: number;
 
-  public entryType!: ListEntryType;
+  declare entryType: ListEntryType;
 
-  public timeAdded!: Date;
+  declare timeAdded: Date;
 
-  public addedBy!: number;
+  declare addedBy: number;
 
-  public reason!: string;
+  declare reason: string;
 
-  public readonly createdAt!: Date;
+  declare readonly createdAt: Date;
 
-  public readonly updatedAt!: Date;
+  declare readonly updatedAt: Date;
 }
 
 export const ListEntryModelAttributes: sequelize.ModelAttributes = {

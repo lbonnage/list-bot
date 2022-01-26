@@ -9,15 +9,14 @@ export type ChannelCreationAttributes = sequelize.Optional<ChannelAttributes, 'i
 
 export class Channel
   extends sequelize.Model<ChannelAttributes, ChannelCreationAttributes>
-  implements ChannelAttributes
 {
-  public id!: number;
+  declare id: number;
 
-  public discordId!: string;
+  declare discordId: string;
 
-  public readonly createdAt!: Date;
+  declare readonly createdAt: Date;
 
-  public readonly updatedAt!: Date;
+  declare readonly updatedAt: Date;
 }
 
 export const ChannelModelAttributes: sequelize.ModelAttributes = {

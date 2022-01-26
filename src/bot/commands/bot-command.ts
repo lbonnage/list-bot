@@ -1,4 +1,5 @@
-import { ApplicationCommandData, CommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
+import { CommandInteraction } from 'discord.js';
 import { BotCommandPermissions } from './bot-command-permissions.js';
 
 /**
@@ -8,7 +9,7 @@ export interface BotCommand {
   /**
    * ApplicationCommandData for the creation of this command.
    */
-  commandData: ApplicationCommandData;
+  commandData: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandOptionsOnlyBuilder;
 
   /**
    * The logic to execute when this command is called.

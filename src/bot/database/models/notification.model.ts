@@ -18,21 +18,21 @@ export class Notification
   extends sequelize.Model<NotificationAttributes, NotificationCreationAttributes>
   implements NotificationAttributes
 {
-  public id!: number;
+  declare id: number;
 
-  public channelId!: number;
+  declare channelId: number;
 
-  public subjectId!: number;
+  declare subjectId: number;
 
-  public userId!: number;
+  declare userId: number;
 
-  public active!: boolean;
+  declare active: boolean;
 
-  public progress!: number;
+  declare progress: number;
 
-  public readonly createdAt!: Date;
+  declare readonly createdAt: Date;
 
-  public readonly updatedAt!: Date;
+  declare readonly updatedAt: Date;
 }
 
 export const NotificationModelAttributes: sequelize.ModelAttributes = {
