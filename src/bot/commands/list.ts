@@ -109,51 +109,48 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
   // If a user is not specified, you need to provide an upload of The List.
 
   if (userDiscord) {
+    // We must create a string containing all entries for this user in The List.
+    let paste = '';
+
     // First, you must check to see if the user you are adding exists in the database.
     // If they don't exist, you must add them to the database.
     const user: User = await User.FindOrCreate(userDiscord.id);
     const userId: number = user.getDataValue('id');
 
-    // Second, retrieve a count of how many entries there are of this user in The List.
-    await ListEntry.findAndCountAll({
-      where: {
-        entry: userId,
-      },
-      order: [['timeAdded', 'DESC']],
-    }).then((value) => {
-      logger.info(`Found and counted all instances of ListEntry with entry: ${userId}.}.`);
-      const { count } = value;
-      if (count === 0) {
-        logger.error(`No List entries found for user: ${userDiscord}.`);
-        interaction.reply({
-          content: `No entries found for ${userDiscord}.`,
-          ephemeral: true,
-        });
-        return;
-      }
+    // Second, create a map mapping from user ID to current Discord name, to efficiently list users who are on The List multiple times.
+    const idToName: Map<number, string> = new Map();
+    const users: User[] = await User .findAll();
 
-      const mostRecent: ListEntry = value.rows[0];
-      const timeAdded = mostRecent.getDataValue('timeAdded');
-      const reason = mostRecent.getDataValue('reason');
-      if (reason !== null) {
-        interaction.reply({
-          content: `${userDiscord} has been added to ${listString} *${count}* time(s).\nThey were most recently added to ${listString} at time: '${timeAdded.toString()}' with reason: '${reason}'.`,
-          ephemeral: false,
-        });
-      } else {
-        interaction.reply({
-          content: `${userDiscord} has been added to ${listString} *${count}* time(s).\nThey were most recently added to ${listString} at time: '${timeAdded.toString()}'.`,
-          ephemeral: false,
-        });
-      }
+    for (const user of users) {
+      await interaction.client.users.fetch(user.getDataValue('discordId') as Snowflake).then((retrievedUser) => {
+        idToName.set(user.getDataValue('id'), `@${retrievedUser.username}#${retrievedUser.discriminator}`);
+      });
+    }
+
+    // Third, retrieve all entries for this user to The List and then construct the string for each.
+    const listEntries: ListEntry[] = await ListEntry.findAll({where: {entry: userId}});
+    listEntries.forEach((listEntry: ListEntry, index: number) => {
+      const entryName: string = idToName.get(listEntry.getDataValue('entry')) as string;
+      const submitterName: string = idToName.get(listEntry.getDataValue('addedBy')) as string;
+      const timeAdded: Date = listEntry.getDataValue('timeAdded');
+      const reason: string = listEntry.getDataValue('reason');
+
+      paste += `${
+        index + 1
+      }.\t${entryName}\t\tAdded by: ${submitterName}\t\tReason: ${reason}\t\tTime added: ${timeAdded.toLocaleString(
+        'en-US',
+      )}\n`;
     });
+
+    fs.writeFileSync('./list.txt', paste);
+    await interaction.reply({files: [new MessageAttachment('./list.txt')]});
   } else {
     // We must create a string containing all entries to The List.
     let paste = '';
 
     // First, create a map mapping from user ID to current Discord name, to efficiently list users who are on The List multiple times.
     const idToName: Map<number, string> = new Map();
-    const users: User[] = await User.findAll();
+    const users: User[] = await User .findAll();
 
     for (const user of users) {
       await interaction.client.users.fetch(user.getDataValue('discordId') as Snowflake).then((retrievedUser) => {
