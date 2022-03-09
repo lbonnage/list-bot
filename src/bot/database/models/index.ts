@@ -5,6 +5,7 @@ import { Subject, SubjectModelAttributes } from './subject.model.js';
 import { User, UserModelAttributes } from './user.model.js';
 import { Notification, NotificationModelAttributes } from './notification.model.js';
 import { ListEntry, ListEntryModelAttributes } from './list-entry.model.js';
+import { PointsEntry, PointsEntryModelAttributes } from './points-entry.model.js';
 
 const logger = Logger('sequelize');
 
@@ -48,3 +49,10 @@ ListEntry.init(ListEntryModelAttributes, {
 });
 
 await ListEntry.sync();
+
+PointsEntry.init(PointsEntryModelAttributes, {
+  sequelize: database,
+  tableName: 'points_entries',
+});
+
+await PointsEntry.sync();
