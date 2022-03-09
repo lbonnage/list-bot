@@ -144,7 +144,6 @@ async function onCheck(interaction: CommandInteraction, userDiscord?: DiscordUse
 
     fs.writeFileSync('./list.txt', paste);
     await interaction.reply({files: [new MessageAttachment('./list.txt')]});
-
   } else {
     // We must create a string containing all entries to The List.
     let paste = '';
@@ -192,9 +191,7 @@ async function execute(interaction: CommandInteraction): Promise<void> {
       value = interaction.options.get(ListCommand.ADD) as CommandInteractionOption;
       logger.info(`List ${ListCommand.ADD} command called with value: ${JSON.stringify(value)}`);
 
-      // userDiscord = value.options?.get(ListCommand.USER)?.user as DiscordUser;
       userDiscord = interaction.options.getUser(ListCommand.USER) as DiscordUser;
-      // reason = value.options?.get(ListCommand.REASON)?.value as string;
       reason = interaction.options.getString(ListCommand.REASON) as string;
 
       await onAdd(interaction, userDiscord, callerDiscord, reason);
@@ -204,7 +201,6 @@ async function execute(interaction: CommandInteraction): Promise<void> {
       value = interaction.options.get(ListCommand.REMOVE) as CommandInteractionOption;
       logger.info(`List ${ListCommand.REMOVE} command called with value: ${JSON.stringify(value)}`);
 
-      // userDiscord = value.options?.get(ListCommand.USER)?.user as DiscordUser;
       userDiscord = interaction.options.getUser(ListCommand.USER) as DiscordUser;
 
 
@@ -215,7 +211,6 @@ async function execute(interaction: CommandInteraction): Promise<void> {
       value = interaction.options.get(ListCommand.CHECK) as CommandInteractionOption;
       logger.info(`List ${ListCommand.CHECK} command called with value: ${JSON.stringify(value)}`);
 
-      // userDiscord = value.options?.get(ListCommand.USER)?.user as DiscordUser;
       userDiscord = interaction.options.getUser(ListCommand.USER) as DiscordUser;
 
       if (userDiscord !== undefined) {
@@ -279,7 +274,7 @@ const listCommand = new SlashCommandBuilder()
   .addSubcommand(subcommand => 
     subcommand
       .setName(ListCommand.CHECK)
-      .setDescription('Check The List  If a user is not specified, returns an upload of The List.')
+      .setDescription('Check The List.  If a user is not specified, returns an upload of The List.')
       .addUserOption(option => 
         option
           .setName(ListCommand.USER)
