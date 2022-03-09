@@ -219,5 +219,6 @@ modules.xml
 # The database
 list-bot-database/database.db
 
-# The text file created by the `/list check` command.\
+# Generated text files.\
 list.txt
+points.txt
