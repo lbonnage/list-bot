@@ -6,6 +6,7 @@ import { User, UserModelAttributes } from './user.model.js';
 import { Notification, NotificationModelAttributes } from './notification.model.js';
 import { ListEntry, ListEntryModelAttributes } from './list-entry.model.js';
 import { PointsEntry, PointsEntryModelAttributes } from './points-entry.model.js';
+import { Track, TrackModelAttributes } from './track.model.js';
 
 const logger = Logger('sequelize');
 
@@ -33,26 +34,28 @@ User.init(UserModelAttributes, {
   sequelize: database,
   tableName: 'users',
 });
-
 await User.sync();
 
 Notification.init(NotificationModelAttributes, {
   sequelize: database,
   tableName: 'notifications',
 });
-
 await Notification.sync();
 
 ListEntry.init(ListEntryModelAttributes, {
   sequelize: database,
   tableName: 'list_entries',
 });
-
 await ListEntry.sync();
 
 PointsEntry.init(PointsEntryModelAttributes, {
   sequelize: database,
   tableName: 'points_entries',
 });
-
 await PointsEntry.sync();
+
+Track.init(TrackModelAttributes, {
+  sequelize: database,
+  tableName: 'track',
+})
+await Track.sync();

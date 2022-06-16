@@ -2,7 +2,7 @@ import sequelize from 'sequelize';
 import { User } from './user.model.js';
 import { Logger } from '../../../lib/logger.js';
 
-const logger = Logger('points-entry');
+const logger = Logger('points-entry-model');
 
 export enum PointsEntryType {
   USER,

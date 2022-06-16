@@ -1,10 +1,12 @@
-import { Client, Intents, Message, Interaction, CommandInteraction } from 'discord.js';
+import { Client, Intents, Message, Interaction, CommandInteraction, ModalSubmitInteraction } from 'discord.js';
 import { BotMessage } from './messages/bot-message.js';
 import { BotCommand } from './commands/bot-command.js';
+import { BotUpdate } from './updates/bot-update.js';
 import { Logger } from '../lib/logger.js';
 
 import * as messages from './messages/index.js';
 import * as commands from './commands/index.js';
+import * as updates from './updates/index.js';
 
 const logger = Logger('bot');
 
@@ -56,7 +58,17 @@ export class Bot {
     this.client.once('ready', this.onReady);
     this.client.on('messageCreate', this.onMessage);
     this.client.on('interactionCreate', this.onInteraction);
+    this.initUpdates();
     logger.info('Bot initialized.');
+  }
+
+  /**
+   * Start the update intervals.
+   */
+  private initUpdates(): void {
+    Object.values(updates).forEach((update: BotUpdate) => {
+      setInterval(() => update.execute(this.client), update.interval);
+    });
   }
 
   /**
@@ -106,6 +118,9 @@ export class Bot {
       case 'APPLICATION_COMMAND':
         await this.handleCommandInteraction(interaction as CommandInteraction);
         break;
+      case 'MODAL_SUBMIT':
+        await this.handleModalSubmitInteraction(interaction as ModalSubmitInteraction);
+        break;
       case 'MESSAGE_COMPONENT':
         break;
       case 'PING':
@@ -116,7 +131,7 @@ export class Bot {
   };
 
   /**
-   * Handles Command Interaction types.
+   * Handles Command Interactions.
    * @param commandInteraction The CommandInteraction that needs to be handled.
    * @private
    */
@@ -130,6 +145,27 @@ export class Bot {
       await botCommand.execute(commandInteraction);
     } else {
       logger.error(`Failed to match input command: ${command}`);
+    }
+  }
+
+  /**
+   * Handles Modal Submit Interactions.
+   * @param modalSubmitInteraction The ModalSubmitInteraction that needs to be handled.
+   */
+  private async handleModalSubmitInteraction(modalSubmitInteraction: ModalSubmitInteraction) {
+    const command: string = modalSubmitInteraction.customId.split(' ')[0];
+    const modal: string = command[0].toUpperCase() + command.slice(1).toLowerCase();
+    logger.info(`Received ${modal}`);
+    if (modal in commands) {
+      logger.info(`Matched submitted modal: ${modal}`);
+      const botCommand: BotCommand = commands[modal as keyof typeof commands] as BotCommand;
+      if (botCommand.modalExecute) {
+        await botCommand.modalExecute(modalSubmitInteraction);
+      } else {
+        logger.error(`Command doesn't have a modal interaction: ${modal}`);
+      }
+    } else {
+      logger.error(`Failed to match input modal: ${modal}`);
     }
   }
 }
