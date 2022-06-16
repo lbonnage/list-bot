@@ -1,7 +1,7 @@
 import sequelize from 'sequelize';
 import { Logger } from '../../../lib/logger.js';
 
-const logger = Logger('user');
+const logger = Logger('user-model');
 
 export interface UserAttributes {
   id: number;

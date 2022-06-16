@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
-import { CommandInteraction } from 'discord.js';
+import { CommandInteraction, ModalSubmitInteraction } from 'discord.js';
 import { BotCommandPermissions } from './bot-command-permissions.js';
 
 /**
@@ -16,6 +16,12 @@ export interface BotCommand {
    * @param interaction The Interaction associated with the call of this command.
    */
   execute: (interaction: CommandInteraction) => Promise<void>;
+
+  /**
+   * The logic to execute when this modal is submitted.
+   * @param interaction The Interaction associated with the call of this command.
+   */
+  modalExecute?: (interaction: ModalSubmitInteraction) => Promise<void>;
 
   /**
    * Permissions for use of this command.
