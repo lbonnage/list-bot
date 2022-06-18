@@ -26,12 +26,25 @@ export class JikanService {
 
     return new Promise((resolve, reject) => {
       this.client.anime.get(id)
-      .then((anime) => {        
-        resolve({
-          name: anime?.title.english as string,
-          airing: anime?.airInfo.airing as boolean,
-          episodes: anime?.episodes as unknown as number,
-        })
+      .then((anime) => { 
+        
+        let animeDetails: AnimeDetails = {
+          name: "N/A",
+          airing: false,
+          episodes: -1,
+        };
+        
+        if (anime?.title.english) {
+          animeDetails.name = anime.title.english;
+        }
+        if (anime?.airInfo.airing) {
+          animeDetails.airing = anime.airInfo.airing;
+        }
+        if (anime?.episodes) {
+          animeDetails.episodes = anime.episodes;
+        }
+
+        resolve(animeDetails)
       }).catch((error) => {
         logger.error(`Failed to find anime ${id}: ${error}`);
         reject(error);
